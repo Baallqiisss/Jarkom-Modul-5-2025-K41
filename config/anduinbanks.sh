@@ -1,4 +1,4 @@
-cat << EOF > /etc/network/interfaces
+# nano /etc/network/interfaces
 auto lo
 iface lo inet loopback
 
@@ -12,12 +12,8 @@ iface eth1 inet static
     address 10.84.0.129
     netmask 255.255.255.128
 
-EOF
-
 echo "nameserver 192.168.122.1" > /etc/resolv.conf
 
-echo 1 > /proc/sys/net/ipv4/ip_forward
-route add default gw 10.84.0.9
 route add -net 10.84.0.0   netmask 255.255.255.252 gw 10.84.0.9 #A1
 route add -net 10.84.0.4   netmask 255.255.255.252 gw 10.84.0.9 #A2
 route add -net 10.84.0.12  netmask 255.255.255.252 gw 10.84.0.9 #A4
