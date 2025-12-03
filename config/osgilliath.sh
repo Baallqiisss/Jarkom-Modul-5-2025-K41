@@ -1,0 +1,45 @@
+# nano /etc/network/interfaces
+
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet static
+    address 10.84.0.29
+    netmask 255.255.255.252
+
+auto eth2
+iface eth2 inet static
+    address 10.84.0.17
+    netmask 255.255.255.252
+
+auto eth3
+iface eth3 inet static
+    address 10.84.0.1
+    netmask 255.255.255.252
+
+while true; do
+    IP_INTERFACE_NAT=$(ip -4 addr show eth0 | grep "inet " | awk '{print $2}' | cut -d/ -f1)
+    if [ -n "$IP_INTERFACE_NAT" ]; then
+        break
+    fi
+    sleep 1
+done
+
+iptables -t nat -A POSTROUTING -s 10.84.0.0/16 -o eth0 -j SNAT --to-source $IP_INTERFACE_NAT
+
+route add -net 10.89.0.4 netmask 255.255.255.252 gw 10.84.0.2 #A2
+route add -net 10.89.0.8 netmask 255.255.255.252 gw 10.84.0.2 #A3
+route add -net 10.89.0.12 netmask 255.255.255.252 gw 10.84.0.2 #A4
+route add -net 10.89.0.128 netmask 255.255.255.128 gw 10.84.0.2 #A5
+route add -net 10.89.1.0 netmask 255.255.255.0 gw 10.84.0.2 #A6
+route add -net 10.89.0.20 netmask 255.255.255.252 gw 10.84.0.18 #A8
+route add -net 10.89.0.24 netmask 255.255.255.252 gw 10.84.0.18 #A9
+route add -net 10.89.0.64 netmask 255.255.255.192 gw 10.84.0.18 #A10
+route add -net 10.89.0.32 netmask 255.255.255.248 gw 10.84.0.18 #A11
+route add -net 10.89.0.40 netmask 255.255.255.248 gw 10.84.0.30 #A13
+
+
